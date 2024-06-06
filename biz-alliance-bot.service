@@ -1,5 +1,5 @@
 [Unit]
-Discord bot for notifying news about business alliances
+Description=Discord bot for notifying news about business alliances
 After=network.target
 
 [Service]
