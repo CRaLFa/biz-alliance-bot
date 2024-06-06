@@ -1,0 +1,12 @@
+[Unit]
+Discord bot for notifying news about business alliances
+After=network.target
+
+[Service]
+Type=simple
+User=rana
+Group=rana
+WorkingDirectory=/home/rana/biz-alliance-bot
+ExecStart=/home/rana/.deno/bin/deno run -A --unstable-kv ./main.ts
+Restart=no
+KillMode=process
