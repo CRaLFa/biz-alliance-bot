@@ -36,7 +36,9 @@ type SearchResult = {
 
   const searchNews = async (seachWord: string) => {
     try {
-      const response = await fetch(SEARCH_URL + seachWord);
+      const response = await fetch(SEARCH_URL + seachWord, {
+        signal: AbortSignal.timeout(15000),
+      });
       if (!response.ok)
         throw new Error(`${response.status} ${response.statusText}`);
       return await response.json() as SearchResult;
@@ -46,10 +48,9 @@ type SearchResult = {
     }
   };
 
-  const getTodayMd = () => {
+  const getMd = (d: Date) => {
     const padZero = (n: number, len: number) => ('0'.repeat(len) + n).slice(-len);
-    const now = new Date();
-    return `${padZero(now.getMonth() + 1, 2)}/${padZero(now.getDate(), 2)}`;
+    return `${padZero(d.getMonth() + 1, 2)}/${padZero(d.getDate(), 2)}`;
   };
 
   const processNews = async (channelIds: bigint[]) => {
@@ -67,7 +68,7 @@ type SearchResult = {
       return;
     }
     console.log(JSON.stringify(newItems));
-    const today = getTodayMd();
+    const today = getMd(new Date());
     for (const item of newItems) {
       const content = `${item.title} (${item.published_at.replace('今日', today)})\nhttps://minkabu.jp${item.url}`;
       for (const channelId of channelIds)
@@ -76,12 +77,11 @@ type SearchResult = {
     await kv.set(KV_KEY, Math.max(...result.items.map(item => parseInt(item.url.match(/\d+$/)![0], 10))));
   };
 
-  new Promise<bigint[]>((resolve, reject) => {
+  new Promise<bigint[]>((resolve) => {
     bot.events.ready = (_, payload) => {
       console.log(`Logged in as ${payload.user.username}`);
       resolve(payload.guilds);
     };
-    setTimeout(reject, 15000);
     startBot(bot);
   }).then(async (guildIds) => {
     const channelIds = await getTextChannelIds(guildIds);
