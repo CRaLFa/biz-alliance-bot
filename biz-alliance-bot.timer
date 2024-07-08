@@ -2,7 +2,7 @@
 Description=Run biz-alliance-bot
 
 [Timer]
-OnCalendar=*:01/10:00
+OnCalendar=*:*:00
 Persistent=true
 
 [Install]
