@@ -34,18 +34,20 @@ type SearchResult = {
     return channels.filter((chan) => chan.type === ChannelTypes.GuildText && chan.name === '一般').map((chan) => chan.id);
   };
 
-  const searchNews = async (seachWord: string) => {
-    try {
-      const response = await fetch(SEARCH_URL + seachWord, {
-        signal: AbortSignal.timeout(15000),
-      });
-      if (!response.ok)
-        throw new Error(`${response.status} ${response.statusText}`);
-      return await response.json() as SearchResult;
-    } catch (err) {
-      console.error(err);
-      return null;
-    }
+  const searchNews = (...searchWords: string[]) => {
+    return Promise.all(searchWords.map(async (word) => {
+      try {
+        const response = await fetch(SEARCH_URL + word, {
+          signal: AbortSignal.timeout(15000),
+        });
+        if (!response.ok)
+          throw new Error(`${response.status} ${response.statusText}`);
+        return await response.json() as SearchResult;
+      } catch (err) {
+        console.error(err);
+        return null;
+      }
+    }));
   };
 
   const getMd = (d: Date) => {
@@ -54,12 +56,13 @@ type SearchResult = {
   };
 
   const processNews = async (channelIds: bigint[]) => {
-    const result = await searchNews('提携');
-    if (!result)
+    const results = await searchNews('提携', '協業');
+    if (results.every(res => !res))
       return;
     // await kv.delete(KV_KEY);
     const lastNewsNo = (await kv.get<number>(KV_KEY)).value ?? 0;
-    const newItems = result.items.filter(item => {
+    const items = results.filter((res): res is SearchResult => !!res).flatMap(res => res.items);
+    const newItems = items.filter(item => {
       const matched = item.url.match(/\d+$/);
       return matched && parseInt(matched[0], 10) > lastNewsNo;
     });
@@ -74,7 +77,7 @@ type SearchResult = {
       for (const channelId of channelIds)
         await bot.helpers.sendMessage(channelId, { content });
     }
-    await kv.set(KV_KEY, Math.max(...result.items.map(item => parseInt(item.url.match(/\d+$/)![0], 10))));
+    await kv.set(KV_KEY, Math.max(...items.map(item => parseInt(item.url.match(/\d+$/)![0], 10))));
   };
 
   new Promise<bigint[]>((resolve) => {
