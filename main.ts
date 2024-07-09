@@ -77,7 +77,7 @@ type SearchResult = {
       for (const channelId of channelIds)
         await bot.helpers.sendMessage(channelId, { content });
     }
-    await kv.set(KV_KEY, Math.max(...items.map((item) => parseInt(item.url.match(/\d+$/)![0], 10))));
+    await kv.set(KV_KEY, Math.max(...newItems.map((item) => parseInt(item.url.match(/\d+$/)![0], 10))));
   };
 
   new Promise<bigint[]>((resolve) => {
