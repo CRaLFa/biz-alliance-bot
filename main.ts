@@ -88,8 +88,8 @@ type SearchResult = {
     startBot(bot);
   }).then(async (guildIds) => {
     const channelIds = await getTextChannelIds(guildIds);
-    await processNews(channelIds);
-    Deno.exit(0);
+    Deno.cron('Fetch news', { minute: { every: 1 } }, () => processNews(channelIds));
+    // Deno.exit(0);
   }).catch((err) => {
     console.error(err);
     Deno.exit(1);
