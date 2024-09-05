@@ -1,27 +1,23 @@
 import 'https://deno.land/std@0.218.2/dotenv/load.ts';
 import { createBot, startBot, Intents, ChannelTypes } from 'https://deno.land/x/discordeno@18.0.1/mod.ts';
 
-const SEARCH_URL = 'https://minkabu.jp/news/search.json?q=';
 const KV_KEY = ['MINKABU-NEWS', 'biz-alliance', 'news-no'];
 
 type SearchResult = {
-  header: {
-    datetime: string;
-    total_count: number;
-    total_page: number;
-    current_count: number;
-    current_page: number;
-  };
-  items: {
-    url: string;
+  latestNewsNo: number;
+  matchedNews: {
+    no: number;
     title: string;
     published_at: string;
   }[];
 };
 
-(async () => {
+(() => {
 
-  const kv = await Deno.openKv();
+  if (!Deno.env.has('BOT_TOKEN')) {
+    console.error("Environment variable 'BOT_TOKEN' is not set");
+    Deno.exit(1);
+  }
 
   const bot = createBot({
     token: Deno.env.get('BOT_TOKEN')!,
@@ -34,50 +30,41 @@ type SearchResult = {
     return channels.filter((chan) => chan.type === ChannelTypes.GuildText && chan.name === '一般').map((chan) => chan.id);
   };
 
-  const searchNews = (...searchWords: string[]) => {
-    return Promise.all(searchWords.map(async (word) => {
-      try {
-        const response = await fetch(SEARCH_URL + encodeURIComponent(word), {
-          signal: AbortSignal.timeout(15000),
-        });
-        if (!response.ok)
-          throw new Error(`${response.status} ${response.statusText}`);
-        return await response.json() as SearchResult;
-      } catch (err) {
-        console.error(err);
-        return null;
-      }
-    }));
-  };
-
-  const getMd = (d: Date) => {
-    const padZero = (n: number, len: number) => ('0'.repeat(len) + n).slice(-len);
-    return `${padZero(d.getMonth() + 1, 2)}/${padZero(d.getDate(), 2)}`;
+  const searchNews = async (lastNewsNo: number, ...searchWords: string[]) => {
+    const cmd = new Deno.Command('bash', {
+      args: [
+        './search_news.sh',
+        String(lastNewsNo),
+        ...searchWords,
+      ],
+    });
+    const { code, stdout, stderr } = await cmd.output();
+    const decoder = new TextDecoder();
+    if (code !== 0) {
+      console.error(decoder.decode(stderr));
+      return null;
+    }
+    return JSON.parse(decoder.decode(stdout)) as SearchResult;
   };
 
   const processNews = async (channelIds: bigint[]) => {
-    const results = await searchNews('提携', '協業');
-    if (results.every((res) => !res))
-      return;
+    const kv = await Deno.openKv();
     // await kv.delete(KV_KEY);
     const lastNewsNo = (await kv.get<number>(KV_KEY)).value ?? 0;
-    const items = results.filter((res): res is SearchResult => !!res).flatMap((res) => res.items);
-    const newItems = items.filter((item) => {
-      const matched = item.url.match(/\d+$/);
-      return matched && parseInt(matched[0], 10) > lastNewsNo;
-    });
-    if (newItems.length < 1) {
+    const res = await searchNews(lastNewsNo, '提携', '協業');
+    if (!res)
+      return;
+    await kv.set(KV_KEY, res.latestNewsNo);
+    if (res.matchedNews.length < 1) {
       console.log('No new entry about business alliances');
       return;
     }
-    console.log(JSON.stringify(newItems));
-    const today = getMd(new Date());
-    for (const item of newItems) {
-      const content = `${item.title} (${item.published_at.replace('今日', today)})\nhttps://minkabu.jp${item.url}`;
+    console.log(JSON.stringify(res));
+    for (const news of res.matchedNews) {
+      const content = `${news.title} (${news.published_at})\nhttps://minkabu.jp/news/${news.no}`;
       for (const channelId of channelIds)
         await bot.helpers.sendMessage(channelId, { content });
     }
-    await kv.set(KV_KEY, Math.max(...newItems.map((item) => parseInt(item.url.match(/\d+$/)![0], 10))));
   };
 
   new Promise<bigint[]>((resolve) => {
