@@ -41,6 +41,7 @@ get_matched_title () {
 get_matched_news () {
 	local -i first=$1
 	local -i last=$(( $2 == 0 ? first - 19 : $2 + 1 ))
+	(( first < last )) && return
 	shift 2
 	local search_words=$(sed 's/ /|/g' <<< "$*")
 	export -f get_matched_title
