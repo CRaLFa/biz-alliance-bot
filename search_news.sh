@@ -45,7 +45,7 @@ get_matched_news () {
 	shift 2
 	local search_words=$(sed 's/ /|/g' <<< "$*")
 	export -f get_matched_title
-	parallel -j 0 -k get_matched_title ::: $(seq $first -1 $last) ::: "$search_words"
+	parallel -j 0 -k get_matched_title :::: <(seq $first -1 $last) ::: "$search_words"
 }
 
 main () {
