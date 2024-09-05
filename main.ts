@@ -30,7 +30,7 @@ type SearchResult = {
     return channels.filter((chan) => chan.type === ChannelTypes.GuildText && chan.name === '一般').map((chan) => chan.id);
   };
 
-  const searchNews = async (lastNewsNo: number, ...searchWords: string[]) => {
+  const searchNews = async (lastNewsNo: number, searchWords: string[]) => {
     const cmd = new Deno.Command('bash', {
       args: [
         // '-x',
@@ -52,7 +52,7 @@ type SearchResult = {
     const kv = await Deno.openKv();
     // await kv.delete(KV_KEY);
     const lastNewsNo = (await kv.get<number>(KV_KEY)).value ?? 0;
-    const res = await searchNews(lastNewsNo, '提携', '協業');
+    const res = await searchNews(lastNewsNo, ['提携', '協業']);
     if (!res)
       return;
     await kv.set(KV_KEY, res.latestNewsNo);
