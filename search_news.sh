@@ -1,21 +1,22 @@
 #!/bin/bash
 
-set -o pipefail
+set -uo pipefail
+# set -x
 
 check_dependency () {
-    which pup &> /dev/null || {
-        echo 'pup is required' >&2
-        return 1
-    }
-    which parallel &> /dev/null || {
-        echo 'parallel is required' >&2
-        return 1
-    }
-    which jo &> /dev/null || {
-        echo 'jo is required' >&2
-        return 1
-    }
-    return 0
+	which pup &> /dev/null || {
+		echo 'pup is required' >&2
+		return 1
+	}
+	which parallel &> /dev/null || {
+		echo 'parallel is required' >&2
+		return 1
+	}
+	which jo &> /dev/null || {
+		echo 'jo is required' >&2
+		return 1
+	}
+	return 0
 }
 
 get_latest_news_no () {
@@ -41,17 +42,17 @@ get_matched_news () {
 	local -i first=$1
 	local -i last=$(( $2 == 0 ? first - 19 : $2 + 1 ))
 	shift 2
-	local search_words=$(printf '%s\n' "$@" | paste -sd '|')
+	local search_words=$(sed 's/ /|/g' <<< "$*")
 	export -f get_matched_title
 	parallel -j 0 -k get_matched_title ::: $(seq $first -1 $last) ::: "$search_words"
 }
 
 main () {
-    (( $# < 2 )) && {
-        echo "Usage: $(basename $0) LAST_NEWS_NO SEARCH_WORD..." >&2
-        return
-    }
-    check_dependency || return
+	(( $# < 2 )) && {
+		echo "Usage: $(basename $0) LAST_NEWS_NO SEARCH_WORD..." >&2
+		return
+	}
+	check_dependency || return
 
 	local -i last_news_no=$1 latest_news_no
 	latest_news_no=$(get_latest_news_no) || return

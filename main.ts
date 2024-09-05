@@ -33,6 +33,7 @@ type SearchResult = {
   const searchNews = async (lastNewsNo: number, ...searchWords: string[]) => {
     const cmd = new Deno.Command('bash', {
       args: [
+        // '-x',
         './search_news.sh',
         String(lastNewsNo),
         ...searchWords,
