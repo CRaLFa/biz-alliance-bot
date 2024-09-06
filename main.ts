@@ -38,6 +38,7 @@ type SearchResult = {
         String(lastNewsNo),
         ...searchWords,
       ],
+      signal: AbortSignal.timeout(15000),
     });
     const { code, stdout, stderr } = await cmd.output();
     const decoder = new TextDecoder();
