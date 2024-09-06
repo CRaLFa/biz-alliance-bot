@@ -39,7 +39,7 @@ get_matched_title () {
 }
 
 get_matched_news () {
-	local -i first=$1
+	local -i first=$(( $1 + 5 ))
 	local -i last=$(( $2 == 0 ? first - 19 : $2 + 1 ))
 	(( first < last )) && return
 	shift 2
