@@ -31,8 +31,7 @@ get_matched_title () {
 	local news_no=$1 search_words="$2" html title published_at
 	html=$(curl -s "https://minkabu.jp/news/$news_no") || return
 	title=$(pup '#contents h1 text{}' <<< "$html")
-	grep -E "$search_words" <<< "$title" &> /dev/null
-	(( $? == 0 )) && {
+	grep -E "$search_words" <<< "$title" &> /dev/null && {
 		published_at=$(echo "$html" | pup '#contents div.flr text{}' | sed 's/投稿://')
 		echo -e "${news_no}\t${title}\t${published_at}"
 	}
@@ -50,7 +49,7 @@ get_matched_news () {
 
 main () {
 	(( $# < 2 )) && {
-		echo "Usage: $(basename $0) LAST_NEWS_NO SEARCH_WORD..." >&2
+		echo "Usage: $(basename "$0") LAST_NEWS_NO SEARCH_WORD..." >&2
 		return
 	}
 	check_dependency || return
@@ -60,7 +59,7 @@ main () {
 	shift 1
 
 	local items=()
-	while read line
+	while read -r line
 	do
 		items+=("$(jo no=$(cut -f 1 <<< "$line") title="$(cut -f 2 <<< "$line")" published_at="$(cut -f 3 <<< "$line")")")
 	done < <(get_matched_news $latest_news_no $last_news_no "$@")
