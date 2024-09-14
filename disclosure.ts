@@ -1,4 +1,4 @@
-import { DOMParser, Element } from 'jsr:@b-fuze/deno-dom';
+import { DOMParser, Element } from '@b-fuze/deno-dom';
 
 type Entry = {
   time: string;
@@ -9,7 +9,7 @@ type Entry = {
 };
 
 type Disclosure = {
-  latestItemTime: number;
+  latestEntryTime: number;
   entries: Entry[];
 };
 
@@ -46,14 +46,13 @@ const getSlashYmd = (d: Date) => {
 
 const toEntry = (tr: Element) => {
   const [title, url] = getTitleAndUrl(tr);
-  const entry: Entry = {
+  return <Entry>{
     time: `${getSlashYmd(new Date())} ${getTime(tr)}`,
     stockCode: getCode(tr),
     companyName: getName(tr),
     title,
     url: `${TDNET_BASE_URL}/${url}`,
   };
-  return entry;
 };
 
 const searchDisclosure = async (lastTime: number, searchWords: string[]): Promise<Disclosure> => {
@@ -61,7 +60,7 @@ const searchDisclosure = async (lastTime: number, searchWords: string[]): Promis
   const today = getNumYmd(new Date());
   const isNewEntry = (tr: Element) => lastYmd < today || lastHm < getNumHm(tr);
   const disclosure: Disclosure = {
-    latestItemTime: 0,
+    latestEntryTime: 0,
     entries: [],
   };
   let page = 0;
@@ -79,7 +78,7 @@ const searchDisclosure = async (lastTime: number, searchWords: string[]): Promis
       return disclosure;
     }
     if (page === 1) {
-      disclosure.latestItemTime = today * 10000 + getNumHm(rows[0]);
+      disclosure.latestEntryTime = today * 10000 + getNumHm(rows[0]);
     }
     const matchedEntries = rows.filter((row) => {
       if (!isNewEntry(row)) {

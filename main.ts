@@ -1,10 +1,10 @@
-import 'jsr:@std/dotenv/load';
-import { basename, extname } from 'jsr:@std/path';
+import '@std/dotenv/load';
+import { basename, extname } from '@std/path';
 import { ChannelTypes, createBot, FileContent, Intents, startBot } from 'https://deno.land/x/discordeno@18.0.1/mod.ts';
 import { searchDisclosure } from './disclosure.ts';
 
 const TOKEN_ENV_KEY = 'BOT_TOKEN';
-const KV_KEY: readonly string[] = ['TDnet', 'biz-alliance', 'lastTime'];
+const KV_KEY = ['TDnet', 'biz-alliance', 'lastTime'] as const;
 
 (() => {
   if (!Deno.env.has(TOKEN_ENV_KEY)) {
@@ -32,9 +32,9 @@ const KV_KEY: readonly string[] = ['TDnet', 'biz-alliance', 'lastTime'];
     if (!res.ok) {
       return undefined;
     }
-    const fileName = basename(url);
     const data = await res.blob();
-    if (data.type !== 'application/pdf') {
+    const fileName = basename(url);
+    if (!data.type.includes('application/pdf')) {
       return {
         blob: data,
         name: fileName,
@@ -63,18 +63,18 @@ const KV_KEY: readonly string[] = ['TDnet', 'biz-alliance', 'lastTime'];
       };
     }
     return {
-      blob: new Blob([stdout]),
-      name: fileName.replace(extname(fileName), '.png'),
+      blob: new Blob([stdout], { type: 'image/png' }),
+      name: fileName.replace(new RegExp(`${extname(fileName)}$`), '.png'),
     };
   };
 
-  const processDisclosures = async (channelIds: bigint[]) => {
+  const main = async (channelIds: bigint[]) => {
     const kv = await Deno.openKv();
     // await kv.delete(KV_KEY);
     const lastTime = (await kv.get<number>(KV_KEY)).value ?? 0;
     const disclosure = await searchDisclosure(lastTime, ['提携', '協業']);
-    if (disclosure.latestItemTime > 0) {
-      await kv.set(KV_KEY, disclosure.latestItemTime);
+    if (disclosure.latestEntryTime > 0) {
+      await kv.set(KV_KEY, disclosure.latestEntryTime);
     }
     if (disclosure.entries.length < 1) {
       console.log('No new entry about business alliances');
@@ -104,7 +104,7 @@ const KV_KEY: readonly string[] = ['TDnet', 'biz-alliance', 'lastTime'];
       minute: { every: 1 },
     }, async () => {
       await new Promise((resolve) => setTimeout(resolve, 5000));
-      processDisclosures(channelIds);
+      main(channelIds);
     });
   }).catch((err) => {
     console.error(err);

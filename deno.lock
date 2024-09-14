@@ -2,34 +2,23 @@
   "version": "3",
   "packages": {
     "specifiers": {
-      "jsr:@b-fuze/deno-dom": "jsr:@b-fuze/deno-dom@0.1.48",
-      "jsr:@std/assert@^0.221.0": "jsr:@std/assert@0.221.0",
-      "jsr:@std/dotenv": "jsr:@std/dotenv@0.225.2",
-      "jsr:@std/path": "jsr:@std/path@0.221.0"
+      "jsr:@b-fuze/deno-dom@^0.1.48": "jsr:@b-fuze/deno-dom@0.1.48",
+      "jsr:@std/dotenv@^0.225.2": "jsr:@std/dotenv@0.225.2",
+      "jsr:@std/path@^1.0.6": "jsr:@std/path@1.0.6"
     },
     "jsr": {
       "@b-fuze/deno-dom@0.1.48": {
         "integrity": "bf5b591aef2e9e9c59adfcbb93a9ecd45bab5b7c8263625beafa5c8f1662e7da"
       },
-      "@std/assert@0.221.0": {
-        "integrity": "a5f1aa6e7909dbea271754fd4ab3f4e687aeff4873b4cef9a320af813adb489a"
-      },
       "@std/dotenv@0.225.2": {
         "integrity": "e2025dce4de6c7bca21dece8baddd4262b09d5187217e231b033e088e0c4dd23"
       },
-      "@std/path@0.221.0": {
-        "integrity": "0a36f6b17314ef653a3a1649740cc8db51b25a133ecfe838f20b79a56ebe0095",
-        "dependencies": [
-          "jsr:@std/assert@^0.221.0"
-        ]
+      "@std/path@1.0.6": {
+        "integrity": "ab2c55f902b380cf28e0eec501b4906e4c1960d13f00e11cfbcd21de15f18fed"
       }
     }
   },
   "remote": {
-    "https://deno.land/std@0.218.2/dotenv/load.ts": "587b342f0f6a3df071331fe6ba1c823729ab68f7d53805809475e486dd4161d7",
-    "https://deno.land/std@0.218.2/dotenv/mod.ts": "0180eaeedaaf88647318811cdaa418cc64dc51fb08354f91f5f480d0a1309f7d",
-    "https://deno.land/std@0.218.2/dotenv/parse.ts": "a49ed243bd62ec26f38614042cda4e5e3a47b18337c93b0f9f8556a5c918884b",
-    "https://deno.land/std@0.218.2/dotenv/stringify.ts": "0047ad7068289735d08964046aea267a750c141b494ca0e38831b89be6c020c2",
     "https://deno.land/x/discordeno@18.0.1/bot.ts": "b6c4f1c966f1a968186921619b6e5ebfec7c5eb0dc2e49a66d2c86b37cb2acc7",
     "https://deno.land/x/discordeno@18.0.1/gateway/manager/calculateTotalShards.ts": "2d2ebe860861d58524416446426d78e5b881c17b3a565ea4822c67f5534214bc",
     "https://deno.land/x/discordeno@18.0.1/gateway/manager/calculateWorkerId.ts": "44c46f2977104a5f92cc21cf31d6b2bc5dcfcefba23495cd619dbdf074a00af1",
@@ -421,5 +410,12 @@
     "https://deno.land/x/discordeno@18.0.1/util/verifySignature.ts": "8ba1c3d2698f347b4f32a76bd33edeb67ee9d23c34f419a797c393926786bb97",
     "https://unpkg.com/@evan/wasm@0.0.93/target/ed25519/deno.js": "9728126890f17b71cee41afdab8a4bc362f6b9f409fe0a5c4f6ca9f3b510fd3a",
     "https://unpkg.com/@evan/wasm@0.0.94/target/zlib/deno.js": "e65131e1c1f45e64960f2699a0b868927ea5c9201c4b986a7cfc57b18be5cc09"
+  },
+  "workspace": {
+    "dependencies": [
+      "jsr:@b-fuze/deno-dom@^0.1.48",
+      "jsr:@std/dotenv@^0.225.2",
+      "jsr:@std/path@^1.0.6"
+    ]
   }
 }
