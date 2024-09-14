@@ -67,7 +67,9 @@ const searchDisclosure = async (lastTime: number, searchWords: string[]): Promis
   let page = 0;
   while (true) {
     page++;
-    const res = await fetch(`${TDNET_BASE_URL}/I_list_${String(page).padStart(3, '0')}_${today}.html`);
+    const res = await fetch(`${TDNET_BASE_URL}/I_list_${String(page).padStart(3, '0')}_${today}.html`, {
+      signal: AbortSignal.timeout(15000),
+    });
     if (!res.ok) {
       return disclosure;
     }

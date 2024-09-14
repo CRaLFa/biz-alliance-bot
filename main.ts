@@ -25,7 +25,9 @@ const KV_KEY = ['TDnet', 'biz-alliance', 'lastTime'];
   };
 
   const getFileContent = async (url: string): Promise<FileContent | undefined> => {
-    const res = await fetch(url);
+    const res = await fetch(url, {
+      signal: AbortSignal.timeout(15000),
+    });
     if (!res.ok) {
       return undefined;
     }
@@ -45,7 +47,6 @@ const KV_KEY = ['TDnet', 'biz-alliance', 'lastTime'];
       stdin: 'piped',
       stdout: 'piped',
       stderr: 'piped',
-      signal: AbortSignal.timeout(15000),
     });
     const process = cmd.spawn();
     const w = process.stdin.getWriter();
