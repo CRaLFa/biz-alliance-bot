@@ -99,7 +99,6 @@ const KV_KEY = ['TDnet', 'biz-alliance', 'lastTime'];
   }).then(async (guildIds) => {
     const channelIds = await getTextChannelIds(guildIds);
     Deno.cron('Fetch disclosures', { minute: { every: 1 } }, () => processDisclosures(channelIds));
-    // Deno.exit(0);
   }).catch((err) => {
     console.error(err);
     Deno.exit(1);
