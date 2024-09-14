@@ -4,7 +4,7 @@ import { ChannelTypes, createBot, FileContent, Intents, startBot } from 'https:/
 import { searchDisclosure } from './disclosure.ts';
 
 const TOKEN_ENV_KEY = 'BOT_TOKEN';
-const KV_KEY = ['TDnet', 'biz-alliance', 'lastTime'];
+const KV_KEY: readonly string[] = ['TDnet', 'biz-alliance', 'lastTime'];
 
 (() => {
   if (!Deno.env.has(TOKEN_ENV_KEY)) {
