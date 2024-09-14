@@ -3,16 +3,17 @@ import { basename, extname } from 'jsr:@std/path';
 import { ChannelTypes, createBot, FileContent, Intents, startBot } from 'https://deno.land/x/discordeno@18.0.1/mod.ts';
 import { searchDisclosure } from './disclosure.ts';
 
+const TOKEN_ENV_KEY = 'BOT_TOKEN';
 const KV_KEY = ['TDnet', 'biz-alliance', 'lastTime'];
 
 (() => {
-  if (!Deno.env.has('BOT_TOKEN')) {
-    console.error("Environment variable 'BOT_TOKEN' is not set");
+  if (!Deno.env.has(TOKEN_ENV_KEY)) {
+    console.error(`Environment variable '${TOKEN_ENV_KEY}' is not set`);
     Deno.exit(1);
   }
 
   const bot = createBot({
-    token: Deno.env.get('BOT_TOKEN')!,
+    token: Deno.env.get(TOKEN_ENV_KEY)!,
     intents: Intents.Guilds | Intents.GuildMessages,
   });
 
