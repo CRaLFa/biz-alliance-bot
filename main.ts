@@ -99,7 +99,10 @@ const KV_KEY = ['TDnet', 'biz-alliance', 'lastTime'];
     startBot(bot);
   }).then(async (guildIds) => {
     const channelIds = await getTextChannelIds(guildIds);
-    Deno.cron('Fetch disclosures', { minute: { every: 1 } }, () => processDisclosures(channelIds));
+    Deno.cron('Fetch disclosures', { minute: { every: 1 } }, async () => {
+      await new Promise((resolve) => setTimeout(resolve, 5000));
+      processDisclosures(channelIds);
+    });
   }).catch((err) => {
     console.error(err);
     Deno.exit(1);
