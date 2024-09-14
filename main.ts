@@ -19,9 +19,9 @@ const KV_KEY = ['TDnet', 'biz-alliance', 'lastTime'];
   const getTextChannelIds = async (guildIds: bigint[]) => {
     const channelCollections = await Promise.all(guildIds.map((guildId) => bot.helpers.getChannels(guildId)));
     const channels = channelCollections.flatMap((collection) => [...collection.values()]);
-    return channels.filter((chan) => chan.type === ChannelTypes.GuildText && chan.name === '一般').map((chan) =>
-      chan.id
-    );
+    return channels
+      .filter((chan) => chan.type === ChannelTypes.GuildText && chan.name === '一般')
+      .map((chan) => chan.id);
   };
 
   const getFileContent = async (url: string): Promise<FileContent | undefined> => {
