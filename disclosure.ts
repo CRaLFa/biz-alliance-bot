@@ -59,7 +59,7 @@ const toEntry = (tr: Element) => {
 const searchDisclosure = async (lastTime: number, searchWords: string[]): Promise<Disclosure> => {
   const lastYmd = Math.floor(lastTime / 10000), lastHm = lastTime % 10000;
   const today = getNumYmd(new Date());
-  const isNewItem = (tr: Element) => lastYmd < today || lastHm < getNumHm(tr);
+  const isNewEntry = (tr: Element) => lastYmd < today || lastHm < getNumHm(tr);
   const disclosure: Disclosure = {
     latestItemTime: 0,
     entries: [],
@@ -82,14 +82,14 @@ const searchDisclosure = async (lastTime: number, searchWords: string[]): Promis
       disclosure.latestItemTime = today * 10000 + getNumHm(rows[0]);
     }
     const matchedEntries = rows.filter((row) => {
-      if (!isNewItem(row)) {
+      if (!isNewEntry(row)) {
         return false;
       }
       const title = getTitleAndUrl(row)[0];
       return searchWords.some((word) => title.includes(word));
     }).map(toEntry);
     disclosure.entries.push(...matchedEntries);
-    if (!isNewItem(rows.at(-1)!)) {
+    if (!isNewEntry(rows.at(-1)!)) {
       return disclosure;
     }
   }
