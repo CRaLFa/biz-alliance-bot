@@ -64,7 +64,7 @@ const KV_KEY = ['TDnet', 'biz-alliance', 'lastTime'] as const;
     }
     return {
       blob: new Blob([stdout], { type: 'image/png' }),
-      name: fileName.replace(new RegExp(`${extname(fileName)}$`), '.png'),
+      name: fileName.replace(new RegExp(`\\${extname(fileName)}$`), '.png'),
     };
   };
 
