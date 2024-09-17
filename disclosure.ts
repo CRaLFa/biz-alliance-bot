@@ -46,7 +46,7 @@ const getSlashYmd = (d: Date) => {
 
 const toEntry = (tr: Element) => {
   const [title, url] = getTitleAndUrl(tr);
-  return <Entry>{
+  return <Entry> {
     time: `${getSlashYmd(new Date())} ${getTime(tr)}`,
     stockCode: getCode(tr),
     companyName: getName(tr),
@@ -64,33 +64,38 @@ const searchDisclosure = async (lastTime: number, searchWords: string[]): Promis
     entries: [],
   };
   let page = 0;
-  while (true) {
-    page++;
-    const res = await fetch(`${TDNET_BASE_URL}/I_list_${String(page).padStart(3, '0')}_${today}.html`, {
-      signal: AbortSignal.timeout(15000),
-    });
-    if (!res.ok) {
-      return disclosure;
-    }
-    const doc = new DOMParser().parseFromString(await res.text(), 'text/html');
-    const rows = Array.from(doc.querySelectorAll('#main-list-table tr'));
-    if (rows.length < 1) {
-      return disclosure;
-    }
-    if (page === 1) {
-      disclosure.latestEntryTime = today * 10000 + getNumHm(rows[0]);
-    }
-    const matchedEntries = rows.filter((row) => {
-      if (!isNewEntry(row)) {
-        return false;
+  try {
+    while (true) {
+      page++;
+      const res = await fetch(`${TDNET_BASE_URL}/I_list_${String(page).padStart(3, '0')}_${today}.html`, {
+        signal: AbortSignal.timeout(15000),
+      });
+      if (!res.ok) {
+        return disclosure;
       }
-      const title = getTitleAndUrl(row)[0];
-      return title.match(new RegExp(searchWords.join('|')));
-    }).map(toEntry);
-    disclosure.entries.push(...matchedEntries);
-    if (!isNewEntry(rows.at(-1)!)) {
-      return disclosure;
+      const doc = new DOMParser().parseFromString(await res.text(), 'text/html');
+      const rows = Array.from(doc.querySelectorAll('#main-list-table tr'));
+      if (rows.length < 1) {
+        return disclosure;
+      }
+      if (page === 1) {
+        disclosure.latestEntryTime = today * 10000 + getNumHm(rows[0]);
+      }
+      const matchedEntries = rows.filter((row) => {
+        if (!isNewEntry(row)) {
+          return false;
+        }
+        const title = getTitleAndUrl(row)[0];
+        return title.match(new RegExp(searchWords.join('|')));
+      }).map(toEntry);
+      disclosure.entries.push(...matchedEntries);
+      if (!isNewEntry(rows.at(-1)!)) {
+        return disclosure;
+      }
     }
+  } catch (err) {
+    console.error(err);
+    return disclosure;
   }
 };
 
