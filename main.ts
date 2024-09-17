@@ -72,7 +72,13 @@ const KV_KEY = ['TDnet', 'biz-alliance', 'lastTime'] as const;
     const kv = await Deno.openKv();
     // await kv.delete(KV_KEY);
     const lastTime = (await kv.get<number>(KV_KEY)).value ?? 0;
-    const disclosure = await searchDisclosure(lastTime, ['提携', '協業']);
+    const disclosure = await searchDisclosure(lastTime, [
+      '提携',
+      '協業',
+      '増配',
+      '自己株式の*取得',
+      '株式の*分割',
+    ]);
     if (disclosure.latestEntryTime > 0) {
       await kv.set(KV_KEY, disclosure.latestEntryTime);
     }

@@ -85,7 +85,7 @@ const searchDisclosure = async (lastTime: number, searchWords: string[]): Promis
         return false;
       }
       const title = getTitleAndUrl(row)[0];
-      return searchWords.some((word) => title.includes(word));
+      return title.match(new RegExp(searchWords.join('|')));
     }).map(toEntry);
     disclosure.entries.push(...matchedEntries);
     if (!isNewEntry(rows.at(-1)!)) {
