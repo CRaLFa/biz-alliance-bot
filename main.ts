@@ -75,7 +75,7 @@ const KV_KEY = ['TDnet', 'biz-alliance', 'lastTime'] as const;
     const disclosure = await searchDisclosure(lastTime, [
       '提携',
       '協業',
-      '増配',
+      '(初|増)配',
       '配当の*実施',
       '自己株式の*取得(?!状況|結果)',
       '株式の*分割',
