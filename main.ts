@@ -84,9 +84,13 @@ const KV_KEY = ['TDnet', 'biz-alliance', 'lastTime'] as const;
     for (const entry of disclosure.entries) {
       const content = `【${entry.companyName} (${entry.stockCode})】${entry.title} (${entry.time})\n${entry.url}`;
       for (const channelId of channelIds) {
+        const file = await getFileContent(entry.url).catch((err) => {
+          console.error(err);
+          return undefined;
+        });
         await bot.helpers.sendMessage(channelId, {
           content,
-          file: await getFileContent(entry.url),
+          file,
         });
       }
     }
@@ -104,7 +108,7 @@ const KV_KEY = ['TDnet', 'biz-alliance', 'lastTime'] as const;
       minute: { every: 1 },
     }, async () => {
       await new Promise((resolve) => setTimeout(resolve, 5000));
-      main(channelIds);
+      await main(channelIds);
     });
   }).catch((err) => {
     console.error(err);
