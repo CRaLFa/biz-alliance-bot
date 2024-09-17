@@ -89,11 +89,11 @@ const KV_KEY = ['TDnet', 'biz-alliance', 'lastTime'] as const;
     console.log(JSON.stringify(disclosure));
     for (const entry of disclosure.entries) {
       const content = `【${entry.companyName} (${entry.stockCode})】${entry.title} (${entry.time})\n${entry.url}`;
+      const file = await getFileContent(entry.url).catch((err) => {
+        console.error(err);
+        return undefined;
+      });
       for (const channelId of channelIds) {
-        const file = await getFileContent(entry.url).catch((err) => {
-          console.error(err);
-          return undefined;
-        });
         await bot.helpers.sendMessage(channelId, {
           content,
           file,
