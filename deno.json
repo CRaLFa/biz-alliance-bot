@@ -1,6 +1,6 @@
 {
   "tasks": {
-    "dev": "deno run -A --watch --unstable-kv --unstable-cron main.ts"
+    "dev": "deno run -A --watch --unstable-kv --unstable-cron ./main.ts"
   },
   "fmt": {
     "useTabs": false,

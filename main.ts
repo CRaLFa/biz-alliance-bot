@@ -76,7 +76,7 @@ const KV_KEY = ['TDnet', 'biz-alliance', 'lastTime'] as const;
       '提携',
       '協業',
       '増配',
-      '自己株式の*取得(?!結果)',
+      '自己株式の*取得(?!状況|結果)',
       '株式の*分割',
     ]);
     if (disclosure.latestEntryTime > 0) {
