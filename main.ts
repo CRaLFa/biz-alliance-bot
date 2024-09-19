@@ -81,6 +81,7 @@ const KV_KEY = ['TDnet', 'biz-alliance', 'lastTime'] as const;
       '株式の?分割',
       '特許',
       '上方修正',
+      '子会社化',
     ]);
     if (disclosure.latestEntryTime > 0) {
       await kv.set(KV_KEY, disclosure.latestEntryTime);
