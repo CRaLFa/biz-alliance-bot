@@ -27,7 +27,7 @@ const getCode = (tr: Element) => {
 
 const getName = (tr: Element) => {
   const tdName = tr.querySelector('td.kjName');
-  return tdName ? tdName.textContent.trim() : '';
+  return tdName ? tdName.textContent.trim().replace(/^[Ａ-Ｚ]－/, '') : '';
 };
 
 const getTitleAndUrl = (tr: Element) => {
