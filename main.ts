@@ -42,7 +42,7 @@ const KV_KEY = ['TDnet', 'biz-alliance', 'lastTime'] as const;
     }
     const cmd = new Deno.Command('pdftoppm', {
       args: [
-        '-l 1',
+        '-singlefile',
         '-png',
         '-',
       ],
