@@ -101,7 +101,7 @@ const KV_KEY = ['TDnet', 'biz-alliance', 'lastTime'] as const;
         await bot.helpers.sendMessage(channelId, {
           content,
           file,
-        });
+        }).catch((err) => console.error(err));
       }
     }
   };
