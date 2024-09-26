@@ -1,10 +1,10 @@
 import '@std/dotenv/load';
 import { basename, extname } from '@std/path';
 import { ChannelTypes, createBot, FileContent, Intents, startBot } from 'https://deno.land/x/discordeno@18.0.1/mod.ts';
-import { searchDisclosure } from './disclosure.ts';
+import { searchDisclosure } from './tdnet.ts';
 
 const TOKEN_ENV_KEY = 'BOT_TOKEN';
-const KV_KEY = ['TDnet', 'biz-alliance', 'lastTime'] as const;
+const KV_KEY = ['TDnet', 'lastTime'] as const;
 
 (() => {
   if (!Deno.env.has(TOKEN_ENV_KEY)) {
@@ -118,7 +118,7 @@ const KV_KEY = ['TDnet', 'biz-alliance', 'lastTime'] as const;
     startBot(bot);
   }).then(async (guildIds) => {
     const channelIds = await getTextChannelIds(guildIds);
-    Deno.cron('biz-alliance-bot', {
+    Deno.cron('tdnet-bot', {
       minute: { every: 1 },
     }, async () => {
       await new Promise((resolve) => setTimeout(resolve, 5000));
