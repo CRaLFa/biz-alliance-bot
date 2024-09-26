@@ -81,12 +81,13 @@ const searchDisclosure = async (lastTime: number, searchWords: string[]): Promis
       if (page === 1) {
         disclosure.latestEntryTime = today * 10000 + getNumHm(rows[0]);
       }
+      const searchCond = new RegExp(searchWords.join('|'));
       const matchedEntries = rows.filter((row) => {
         if (!isNewEntry(row)) {
           return false;
         }
         const title = getTitleAndUrl(row)[0];
-        return title.match(new RegExp(searchWords.join('|')));
+        return title.match(searchCond);
       }).map(toEntry);
       disclosure.entries.push(...matchedEntries);
       if (!isNewEntry(rows.at(-1)!)) {
