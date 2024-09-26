@@ -91,7 +91,7 @@ const KV_KEY = ['TDnet', 'lastTime'] as const;
       await kv.set(KV_KEY, disclosure.latestEntryTime);
     }
     if (disclosure.entries.length < 1) {
-      console.log('No new entry about business alliances');
+      console.log('No matching entry');
       return;
     }
     console.log(JSON.stringify(disclosure));
