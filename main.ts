@@ -73,20 +73,8 @@ const KV_KEY = ['TDnet', 'lastTime'] as const;
     const kv = await Deno.openKv();
     // await kv.delete(KV_KEY);
     const lastTime = (await kv.get<number>(KV_KEY)).value ?? 0;
-    const disclosure = await searchDisclosure(lastTime, [
-      '提携',
-      '協業',
-      '(初|増)配',
-      '配当の?実施',
-      '自己株式の?取得(?!状況|結果|終了|）)',
-      '株式の?分割',
-      '特許',
-      '上方修正',
-      '子会社化',
-      '(業績|配当)予想の修正',
-      '共同.*(研究|開発)',
-      '(?<!流動性プロバイダーの)指定',
-    ]);
+    const searchWords = (await Deno.readTextFile('./search_words.txt')).trim().replaceAll(/\r*\n/g, '|');
+    const disclosure = await searchDisclosure(lastTime, new RegExp(searchWords));
     if (disclosure.latestEntryTime > 0) {
       await kv.set(KV_KEY, disclosure.latestEntryTime);
     }

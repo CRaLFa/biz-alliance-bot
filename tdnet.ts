@@ -55,7 +55,7 @@ const toEntry = (tr: Element) => {
   };
 };
 
-const searchDisclosure = async (lastTime: number, searchWords: string[]): Promise<Disclosure> => {
+const searchDisclosure = async (lastTime: number, searchCond: RegExp): Promise<Disclosure> => {
   const lastYmd = Math.floor(lastTime / 10000), lastHm = lastTime % 10000;
   const today = getNumYmd(new Date());
   const isNewEntry = (tr: Element) => lastYmd < today || lastHm < getNumHm(tr);
@@ -81,13 +81,12 @@ const searchDisclosure = async (lastTime: number, searchWords: string[]): Promis
       if (page === 1) {
         disclosure.latestEntryTime = today * 10000 + getNumHm(rows[0]);
       }
-      const searchCond = new RegExp(searchWords.join('|'));
       const matchedEntries = rows.filter((row) => {
         if (!isNewEntry(row)) {
           return false;
         }
         const title = getTitleAndUrl(row)[0];
-        return title.match(searchCond);
+        return searchCond.test(title);
       }).map(toEntry);
       disclosure.entries.push(...matchedEntries);
       if (!isNewEntry(rows.at(-1)!)) {
