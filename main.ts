@@ -85,7 +85,7 @@ const KV_KEY = ['TDnet', 'lastTime'] as const;
       '子会社化',
       '(業績|配当)予想の修正',
       '共同.*(研究|開発)',
-      '指定',
+      '(?<!流動性プロバイダーの)指定',
     ]);
     if (disclosure.latestEntryTime > 0) {
       await kv.set(KV_KEY, disclosure.latestEntryTime);
